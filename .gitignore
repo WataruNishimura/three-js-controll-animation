@@ -1,0 +1,4 @@
+*.lock
+.DS_store
+*.log
+node_modules
