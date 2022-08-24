@@ -1,6 +1,6 @@
 import "../src/scss/main.scss";
 
-import { Scene, WebGLRenderer, PerspectiveCamera, BoxGeometry, MeshBasicMaterial, Mesh, AmbientLight, GammaEncoding, Clock, AnimationMixer, LoopOnce, LoopRepeat, PlaneGeometry, DoubleSide, Color, Vector2, Raycaster, DirectionalLight } from 'three';
+import { Scene, WebGLRenderer, PerspectiveCamera, BoxGeometry, MeshBasicMaterial, Mesh, AmbientLight, GammaEncoding, Clock, AnimationMixer, LoopOnce, LoopRepeat, PlaneGeometry, DoubleSide, Color, Vector2, Raycaster, DirectionalLight, HemisphereLight, MeshLambertMaterial } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
@@ -17,31 +17,35 @@ camera.position.set(0, 0, 100);
 camera.lookAt(0, 0, 0);
 
 const scene = new Scene()
-scene.background = new Color(0xf0f0f0)
+scene.background = new Color(0x888888)
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.2;
 const loader = new GLTFLoader();
 
-const light = new DirectionalLight(0x404040, 10);
+const light = new HemisphereLight(0x888888, 0xffffff, 1.0);
 light.position.set(1, 1, 1)
+light.castShadow = true
 scene.add(light)
 
 const planeGeomery = new PlaneGeometry(100, 100)
-const planeMaterial = new MeshBasicMaterial({ color: 0xfafafa, side: DoubleSide })
+const planeMaterial = new MeshLambertMaterial({ color: 0xfafafa, side: DoubleSide })
 const plane = new Mesh(planeGeomery, planeMaterial);
 plane.name = "Plane"
 plane.position.set(0, 0, 0)
+console.log(plane)
 
 const cubeGeometry = new BoxGeometry(5, 5, 5)
-const cubeMaterial = new MeshBasicMaterial({ color: 0xadadad })
+const cubeMaterial = new MeshLambertMaterial({ color: 0xadadad })
 const cube = new Mesh(cubeGeometry, cubeMaterial);
 const cube2Geometry = new BoxGeometry(5, 5, 5)
-const cube2Material = new MeshBasicMaterial({ color: 0x0f0fff })
+const cube2Material = new MeshLambertMaterial({ color: 0x0f0fff })
 const cube2 = new Mesh(cube2Geometry, cube2Material)
 cube2.name = "on"
+cube2.castShadow = true
 cube.name = "off"
 cube.position.set(10, 0, 10)
+cube.castShadow = true
 cube2.position.set(-10, 0, 10)
 
 scene.add(cube2)
@@ -75,6 +79,7 @@ renderer.render(scene, camera);
 
 controls.update()
 
+// Animation Loop
 function animate() {
   requestAnimationFrame(animate)
 
@@ -86,6 +91,7 @@ function animate() {
   renderer.render(scene, camera)
 }
 
+// クリック検知
 function clickPosition(event) {
   const x = event.clientX
   const y = event.clientY
